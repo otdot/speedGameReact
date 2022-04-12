@@ -1,0 +1,10 @@
+.Circle {
+  border-radius: 50%;
+  background-color: yellowgreen;
+  height: 10rem;
+  width: 10rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+}
