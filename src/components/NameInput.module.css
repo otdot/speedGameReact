@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100&display=swap");
+
+.NameInput {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+
+.NameInput label {
+  display: block;
+  text-align: center;
+  margin: 1rem;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.NameInput input {
+  height: 2.5rem;
+  width: 20rem;
+  font-size: 2.2rem;
+  color: black;
+}

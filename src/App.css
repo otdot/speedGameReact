@@ -21,3 +21,35 @@ body {
   display: flex;
   flex-direction: row;
 }
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.difficultyh1 {
+  color: white;
+  text-align: center;
+}
+
+.topList {
+  position: absolute;
+  top: 30rem;
+  border: 1px solid black;
+  width: 20rem;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.topList h2 {
+  text-align: center;
+}
+
+.topList p {
+  margin: 1rem;
+  display: inline-block;
+  width: 7rem;
+  font-size: 1.2rem;
+}

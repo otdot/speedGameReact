@@ -1,6 +1,6 @@
 .Circle {
   border-radius: 50%;
-  background-color: yellowgreen;
+  background-color: rgb(46, 12, 67);
   height: 10rem;
   width: 10rem;
   display: flex;
