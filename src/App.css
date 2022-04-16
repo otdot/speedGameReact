@@ -32,9 +32,14 @@ body {
   text-align: center;
 }
 
-.topList {
+.topListContainer {
   position: absolute;
+  display: flex;
+  justify-content: space-around;
   top: 30rem;
+}
+
+.topList {
   border: 1px solid black;
   width: 20rem;
   display: flex;

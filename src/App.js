@@ -9,11 +9,6 @@ import { TopList } from "./components/TopList";
 let randnum;
 let prevnum = -1;
 let skippedrounds = 0;
-let easyScores = localStorage.getItem("easy")
-  ? JSON.parse(localStorage.getItem("easy"))
-  : [];
-let mediumScores = [];
-let hardScores = [];
 
 const createIndex = () => {
   const minNum = Math.ceil(0);
@@ -118,15 +113,13 @@ class App extends Component {
   stopGame = () => {
     clearInterval(this.state.intervalId);
 
-    // if (this.state.difficulty === 4) {
-    //   localStorage.setItem("easy", [this.createTopScores(easyScores)]);
-    // } else if (this.state.difficulty === 5) {
-    //   localStorage.setItem("medium", this.createTopScores(mediumScores));
-    // } else if (this.state.difficulty === 6) {
-    //   localStorage.setItem("hard", this.createTopScores(hardScores));
-    // }
+    localStorage.setItem(
+      [this.state.name, this.state.difficulty],
+      this.state.score
+    );
 
-    console.log(easyScores);
+    console.log("from stop game: ", localStorage.getItem(this.state.name));
+
     this.setState({
       gameOn: !this.state.gameOn,
       showModal: !this.state.showModal,
@@ -156,50 +149,34 @@ class App extends Component {
     });
   };
 
-  //Listaan päivittyy vain viimeisin pelaaja ja tulos
+  changeDifficulty = () => {
+    this.setState({
+      difficulty: false,
+      gameOn: false,
+      showModal: false,
+      intervalId: 0,
+      score: 0,
+    });
+  };
 
-  // createTopScores = (arr) => {
-  //   if ([...arr].some((score) => score.includes(this.state.name))) {
-  //     arr = [...arr].map((score) => {
-  //       if (score[1] < this.state.score && score[0] === this.state.name) {
-  //         console.log("old player updated");
-  //         return (score = [this.state.name, this.state.score]);
-  //       } else {
-  //         console.log("other player returned with one being old");
-  //         return score;
-  //       }
-  //     });
-  //   } else {
-  //     console.log("new player added");
-  //     arr = [...arr].push([this.state.name, this.state.score]);
-  //     return arr;
-  //   }
-  //   return [arr];
-  // };
-
-  updateTopScores = () => {
+  updateTopScores = (difficulty) => {
     let localStorageKeys = Object.keys(localStorage);
-    let localStorageValues = Object.values(localStorage);
-    let myLocalStorage = [];
+    let scoreArr = [];
     for (let i = 0; i < localStorageKeys.length; i++) {
-      myLocalStorage.push([localStorageKeys[i], localStorageValues[i]]);
+      if (localStorageKeys[i].includes(difficulty)) {
+        let tempScore = localStorage.getItem(localStorageKeys[i]);
+        let tempName = localStorageKeys[i].replace(`,${difficulty}`, "");
+        scoreArr.push([tempName, tempScore]);
+      }
     }
-    return myLocalStorage.sort((a, b) => b[1] - a[1]);
+    return scoreArr.sort((a, b) => b[1] - a[1]);
   };
 
   render() {
-    console.log(easyScores);
+    this.updateTopScores();
     return (
       <div className="container">
         <h1>Speed game</h1>
-        {/* <TopList propClass="topList">
-          {this.updateTopScores().map((player) => (
-            <div key={player[0]}>
-              <p className="pname">{player[0]}</p>
-              <b className="ppoints">Points: {player[1]}</b>
-            </div>
-          ))}
-        </TopList> */}
 
         {!this.state.name && <NameInput submit={this.handleName} />}
         <h2>Points: {this.state.score}</h2>
@@ -234,24 +211,48 @@ class App extends Component {
             click={this.reload}
           />
         )}
-        <div>
-          {this.state.difficulty && [
-            <div key="circles" className="circleContainer">
-              {this.state.circles}
-            </div>,
-            <div key="buttons" className="buttonContainer">
-              <Button
-                key="start"
-                click={this.handleStart}
-                text={this.state.gameOn ? "stop game" : "start game"}
-              />
-              <Button
-                key="change"
-                click={this.reload}
-                text="change difficulty"
-              />
-            </div>,
-          ]}
+        {this.state.difficulty && [
+          <div key="circles" className="circleContainer">
+            {this.state.circles}
+          </div>,
+          <div key="buttons" className="buttonContainer">
+            <Button
+              key="start"
+              click={this.handleStart}
+              text={this.state.gameOn ? "stop game" : "start game"}
+            />
+            <Button
+              key="change"
+              click={this.changeDifficulty}
+              text="change difficulty"
+            />
+          </div>,
+        ]}
+        <div className="topListContainer">
+          <TopList propClass="topList" difficulty="Easy">
+            {this.updateTopScores("4").map((player) => (
+              <div key={player[0]}>
+                <p className="pname">{player[0]}</p>
+                <b className="ppoints">Points: {player[1]}</b>
+              </div>
+            ))}
+          </TopList>
+          <TopList propClass="topList" difficulty="Medium">
+            {this.updateTopScores("5").map((player) => (
+              <div key={player[0]}>
+                <p className="pname">{player[0]}</p>
+                <b className="ppoints">Points: {player[1]}</b>
+              </div>
+            ))}
+          </TopList>
+          <TopList propClass="topList" difficulty="Hard">
+            {this.updateTopScores("6").map((player) => (
+              <div key={player[0]}>
+                <p>{player[0]}</p>
+                <b>Points: {player[1]}</b>
+              </div>
+            ))}
+          </TopList>
         </div>
       </div>
     );
