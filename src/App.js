@@ -107,6 +107,7 @@ class App extends Component {
   };
 
   circleClick = (e) => {
+    console.log([`${this.state.name},${this.state.difficulty}`]);
     if (e.target.dataset.index == randnum) {
       clearTimeout(this.state.intervalId);
       this.handleRound();
@@ -121,10 +122,25 @@ class App extends Component {
     stopMusic.play();
     clearInterval(this.state.intervalId);
 
-    localStorage.setItem(
-      [this.state.name, this.state.difficulty],
+    if (
+      !Object.keys(localStorage).includes(
+        `${this.state.name},${this.state.difficulty}`
+      )
+    ) {
+      localStorage.setItem(
+        [this.state.name, this.state.difficulty],
+        this.state.score
+      );
+    } else if (
+      localStorage.getItem(`${this.state.name},${this.state.difficulty}`) <
       this.state.score
-    );
+    ) {
+      localStorage.setItem(
+        [this.state.name, this.state.difficulty],
+        this.state.score
+      );
+    }
+
     this.setState({
       gameOn: !this.state.gameOn,
       showModal: !this.state.showModal,
