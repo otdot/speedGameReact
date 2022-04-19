@@ -1,10 +1,24 @@
 .Modal {
   position: absolute;
   background-color: white;
-  height: 20rem;
-  width: 20rem;
+  border-radius: 5px;
+  height: 26rem;
+  width: 40rem;
   z-index: 1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.Modal button {
+  position: absolute;
+  top: 20rem;
+  left: 13rem;
+}
+
+.text {
+  position: absolute;
+  top: 3rem;
+  left: 10rem;
+  font-size: 1.5rem;
 }

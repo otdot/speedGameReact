@@ -10,10 +10,8 @@ let randnum;
 let prevnum = -1;
 let skippedrounds = 0;
 
-const createIndex = () => {
-  const minNum = Math.ceil(0);
-  const maxNum = Math.floor(3);
-  return Math.floor(Math.random() * (maxNum - minNum + minNum) + minNum);
+const createIndex = (minNum, maxNum) => {
+  return Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
 };
 
 const randomColor = () => {
@@ -25,6 +23,7 @@ const randomColor = () => {
 
 class App extends Component {
   state = {
+    maxRandomNumber: 0,
     name: false,
     difficulty: false,
     gameOn: false,
@@ -44,15 +43,15 @@ class App extends Component {
   handleCircles = (e) => {
     switch (e.target.textContent) {
       case "easy":
-        this.setState({ difficulty: 4 });
+        this.setState({ difficulty: 4, maxRandomNumber: 3 });
         this.createCircles(4);
         break;
       case "medium":
-        this.setState({ difficulty: 5 });
+        this.setState({ difficulty: 5, maxRandomNumber: 4 });
         this.createCircles(5);
         break;
       case "hard":
-        this.setState({ difficulty: 6 });
+        this.setState({ difficulty: 6, maxRandomNumber: 5 });
         this.createCircles(6);
         break;
     }
@@ -76,9 +75,10 @@ class App extends Component {
   };
 
   handleRound = () => {
-    randnum = createIndex();
+    console.log("prevnum: ", prevnum);
+    randnum = createIndex(0, this.state.maxRandomNumber);
     while (randnum === prevnum) {
-      randnum = createIndex();
+      randnum = createIndex(0, this.state.maxRandomNumber);
     }
 
     const newCircles = this.state.circles.map((_, i) => {
@@ -95,7 +95,7 @@ class App extends Component {
         return <Circle key={i} index={i} click={this.circleClick} />;
       }
     });
-    this.setState({ circles: newCircles, pace: this.state.pace - 50 });
+    this.setState({ circles: newCircles, pace: this.state.pace * 0.96 });
     prevnum = randnum;
     this.timeOut();
   };
@@ -117,14 +117,13 @@ class App extends Component {
       [this.state.name, this.state.difficulty],
       this.state.score
     );
-
-    console.log("from stop game: ", localStorage.getItem(this.state.name));
-
     this.setState({
       gameOn: !this.state.gameOn,
       showModal: !this.state.showModal,
       circle: this.createCircles(this.state.difficulty),
+      pace: 2000,
     });
+    skippedrounds = 0;
   };
 
   timeOut = () => {
@@ -146,6 +145,7 @@ class App extends Component {
       showModal: false,
       intervalId: 0,
       score: 0,
+      pace: 2000,
     });
   };
 
@@ -156,6 +156,7 @@ class App extends Component {
       showModal: false,
       intervalId: 0,
       score: 0,
+      pace: 2000,
     });
   };
 
@@ -169,7 +170,21 @@ class App extends Component {
         scoreArr.push([tempName, tempScore]);
       }
     }
-    return scoreArr.sort((a, b) => b[1] - a[1]);
+    return scoreArr.sort((a, b) => b[1] - a[1]).slice(0, 3);
+  };
+
+  conditionalText = (score) => {
+    if (score > 50) {
+      return "Champion level score! You got: ";
+    } else if (score > 30) {
+      return "Very good! You got: ";
+    } else if (score > 15) {
+      return "Good job! You got: ";
+    } else if (score > 10) {
+      return "Pretty good! You got: ";
+    } else {
+      return "Better luck next time! You got: ";
+    }
   };
 
   render() {
@@ -206,7 +221,7 @@ class App extends Component {
         </div>
         {this.state.showModal && (
           <Modal
-            text="Game over"
+            text={this.conditionalText(this.state.score)}
             score={this.state.score}
             click={this.reload}
           />
@@ -223,29 +238,29 @@ class App extends Component {
             />
             <Button
               key="change"
-              click={this.changeDifficulty}
+              click={this.state.gameOn ? console.log : this.changeDifficulty}
               text="change difficulty"
             />
           </div>,
         ]}
         <div className="topListContainer">
-          <TopList propClass="topList" difficulty="Easy">
+          <TopList key="4" propClass="topList" difficulty="Easy">
             {this.updateTopScores("4").map((player) => (
               <div key={player[0]}>
-                <p className="pname">{player[0]}</p>
-                <b className="ppoints">Points: {player[1]}</b>
+                <p>{player[0]}</p>
+                <b>Points: {player[1]}</b>
               </div>
             ))}
           </TopList>
-          <TopList propClass="topList" difficulty="Medium">
+          <TopList key="5" propClass="topList" difficulty="Medium">
             {this.updateTopScores("5").map((player) => (
               <div key={player[0]}>
-                <p className="pname">{player[0]}</p>
-                <b className="ppoints">Points: {player[1]}</b>
+                <p>{player[0]}</p>
+                <b>Points: {player[1]}</b>
               </div>
             ))}
           </TopList>
-          <TopList propClass="topList" difficulty="Hard">
+          <TopList key="6" propClass="topList" difficulty="Hard">
             {this.updateTopScores("6").map((player) => (
               <div key={player[0]}>
                 <p>{player[0]}</p>
