@@ -5,10 +5,15 @@ import { Button } from "./components/Button";
 import { Modal } from "./components/Modal";
 import { NameInput } from "./components/NameInput";
 import { TopList } from "./components/TopList";
+import StartMusic from "./assets/sounds/Bongos.mp3";
+import StopMusic from "./assets/sounds/Failure.mp3";
 
 let randnum;
 let prevnum = -1;
 let skippedrounds = 0;
+
+let startMusic = new Audio(StartMusic);
+let stopMusic = new Audio(StopMusic);
 
 const createIndex = (minNum, maxNum) => {
   return Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
@@ -66,6 +71,8 @@ class App extends Component {
   };
 
   handleStart = () => {
+    startMusic.play();
+    startMusic.loop = true;
     if (this.state.intervalId) {
       this.stopGame();
       return this.setState({ intervalId: 0 });
@@ -111,6 +118,8 @@ class App extends Component {
   };
 
   stopGame = () => {
+    startMusic.pause();
+    stopMusic.play();
     clearInterval(this.state.intervalId);
 
     localStorage.setItem(
@@ -140,6 +149,7 @@ class App extends Component {
   };
 
   reload = () => {
+    stopMusic.pause();
     this.setState({
       gameOn: false,
       showModal: false,
@@ -160,19 +170,6 @@ class App extends Component {
     });
   };
 
-  updateTopScores = (difficulty) => {
-    let localStorageKeys = Object.keys(localStorage);
-    let scoreArr = [];
-    for (let i = 0; i < localStorageKeys.length; i++) {
-      if (localStorageKeys[i].includes(difficulty)) {
-        let tempScore = localStorage.getItem(localStorageKeys[i]);
-        let tempName = localStorageKeys[i].replace(`,${difficulty}`, "");
-        scoreArr.push([tempName, tempScore]);
-      }
-    }
-    return scoreArr.sort((a, b) => b[1] - a[1]).slice(0, 3);
-  };
-
   conditionalText = (score) => {
     if (score > 50) {
       return "Champion level score! You got: ";
@@ -188,7 +185,6 @@ class App extends Component {
   };
 
   render() {
-    this.updateTopScores();
     return (
       <div className="container">
         <h1>Speed game</h1>
@@ -244,30 +240,14 @@ class App extends Component {
           </div>,
         ]}
         <div className="topListContainer">
-          <TopList key="4" propClass="topList" difficulty="Easy">
-            {this.updateTopScores("4").map((player) => (
-              <div key={player[0]}>
-                <p>{player[0]}</p>
-                <b>Points: {player[1]}</b>
-              </div>
-            ))}
-          </TopList>
-          <TopList key="5" propClass="topList" difficulty="Medium">
-            {this.updateTopScores("5").map((player) => (
-              <div key={player[0]}>
-                <p>{player[0]}</p>
-                <b>Points: {player[1]}</b>
-              </div>
-            ))}
-          </TopList>
-          <TopList key="6" propClass="topList" difficulty="Hard">
-            {this.updateTopScores("6").map((player) => (
-              <div key={player[0]}>
-                <p>{player[0]}</p>
-                <b>Points: {player[1]}</b>
-              </div>
-            ))}
-          </TopList>
+          <TopList diffnum="4" key="4" propClass="topList" difficulty="Easy" />
+          <TopList
+            diffnum="5"
+            key="5"
+            propClass="topList"
+            difficulty="Medium"
+          />
+          <TopList diffnum="6" key="6" propClass="topList" difficulty="Hard" />
         </div>
       </div>
     );

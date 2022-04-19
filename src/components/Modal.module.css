@@ -22,3 +22,20 @@
   left: 10rem;
   font-size: 1.5rem;
 }
+
+@media (max-width: 1100px) {
+  .Modal {
+    width: 90vw;
+    height: 50vh;
+    text-align: center;
+  }
+
+  .Modal button {
+    top: 15rem;
+    left: 4rem;
+  }
+
+  .text {
+    left: 1rem;
+  }
+}
