@@ -82,7 +82,6 @@ class App extends Component {
   };
 
   handleRound = () => {
-    console.log("prevnum: ", prevnum);
     randnum = createIndex(0, this.state.maxRandomNumber);
     while (randnum === prevnum) {
       randnum = createIndex(0, this.state.maxRandomNumber);
